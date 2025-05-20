@@ -1,0 +1,93 @@
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body Styling */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to right, #f2e9e4, #c9ada7);
+    color: #22223b;
+    padding: 50px 0;
+}
+
+/* Judul */
+h1 {
+    text-align: center;
+    font-size: 2rem;
+    color: #4a4e69;
+    margin-bottom: 30px;
+    font-weight: 700;
+}
+
+/* Container */
+.container {
+    width: 400px;
+    margin: auto;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+/* Fieldset & Legend */
+fieldset {
+    border: 2px solid #c9ada7;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+legend {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #4a4e69;
+    padding: 0 10px;
+}
+
+/* Label & Input */
+label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #22223b;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 10px 14px;
+    border: 2px solid #c9ada7;
+    border-radius: 8px;
+    font-size: 15px;
+    background-color: #f2e9e4;
+    color: #22223b;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input[type="text"]:focus {
+    border-color: #9a8c98;
+    box-shadow: 0 0 0 3px rgba(154, 140, 152, 0.2);
+    outline: none;
+}
+
+/* Tombol Submit */
+input[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    margin-top: 20px;
+    background-color: #4a4e69;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 10px rgba(74, 78, 105, 0.15);
+}
+
+input[type="submit"]:hover {
+    background-color: #22223b;
+    transform: scale(1.02);
+}

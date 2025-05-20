@@ -1,0 +1,155 @@
+/* -- Reset Default -- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to right, #f2e9e4, #c9ada7);
+    color: #22223b;
+    line-height: 1.6;
+    padding: 40px 0;
+}
+
+/* -- Judul Halaman -- */
+h1 {
+    text-align: center;
+    color: #4a4e69;
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    font-weight: 700;
+}
+
+/* -- Tombol Input Data (sama seperti viewdosen.css) -- */
+.center {
+    text-align: center;
+    margin-bottom: 30px;
+}
+.center a {
+    display: inline-block;
+    background-color: #4a4e69;
+    color: #fff;
+    padding: 12px 24px;
+    margin-bottom: 30px;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: transform 0.2s ease, background-color 0.3s ease;
+    box-shadow: 0 4px 12px rgba(74, 78, 105, 0.2);
+}
+
+.center a:hover {
+    background-color: #22223b;
+    transform: translateY(-2px);
+}
+
+/* -- Form Pencarian -- */
+form {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+input[type="text"] {
+    width: 320px;
+    padding: 12px 16px;
+    border: 2px solid #c9ada7;
+    border-radius: 10px;
+    font-size: 15px;
+    outline: none;
+    transition: 0.3s;
+    background-color: #f2e9e4;
+    color: #22223b;
+}
+
+input[type="text"]:focus {
+    border-color: #9a8c98;
+    box-shadow: 0 0 0 3px rgba(154, 140, 152, 0.2);
+}
+
+input[type="submit"] {
+    padding: 12px 20px;
+    background-color: #4a4e69;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    margin-left: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 15px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 10px rgba(74, 78, 105, 0.15);
+}
+
+input[type="submit"]:hover {
+    background-color: #22223b;
+    transform: scale(1.02);
+}
+
+/* -- Tabel Data Mahasiswa -- */
+table {
+    width: 90%;
+    max-width: 1000px;
+    margin: auto;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 0; /* Sudut tabel tidak melengkung */
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+th, td {
+    padding: 18px 20px;
+    text-align: center;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 14.5px;
+}
+
+th {
+    background-color: #22223b;
+    color: #f2e9e4;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+}
+
+tr:nth-child(even) {
+    background-color: #f2e9e4;
+}
+
+tr:hover {
+    background-color: #e8dad2;
+}
+
+/* -- Tombol Aksi (Edit & Hapus) -- */
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    color: white;
+    margin: 0 5px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+/* Edit - Warna ungu pastel */
+.btn-edit {
+    background-color: #9a8c98;
+}
+.btn-edit:hover {
+    background-color: #4a4e69;
+}
+
+/* Hapus - Warna merah muda lembut */
+.btn-delete {
+    background-color: #c94f4f;
+}
+.btn-delete:hover {
+    background-color: #b22222;
+}
