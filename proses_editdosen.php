@@ -1,26 +1,28 @@
 <?php
-if (isset($_POST['edit'])) {
-    include("koneksi.php");
+require_once 'Database.php';
+$db = new Database();
+$conn = $db->getConnection();
 
-    // Ambil data dari form
-    $id_lama = $_POST['id_lama']; // ID sebelum diedit
-    $id_baru = $_POST['idDosen']; // ID setelah diedit
+if (isset($_POST['update'])) {
+    $idDosen = $_POST['idDosen'];
     $namaDosen = $_POST['namaDosen'];
     $noHP = $_POST['noHP'];
+    $id_lama = $_POST['id_lama'];
 
-    // Update query
-    $query = "UPDATE t_dosen 
-              SET idDosen = '$id_baru', namaDosen = '$namaDosen', noHP = '$noHP' 
-              WHERE idDosen = '$id_lama'";
-
-    $result = mysqli_query($link, $query);
-
-    if (!$result) {
-        die("Query gagal dijalankan: " . mysqli_errno($link) . " - " . mysqli_error($link));
+    $stmt = $conn->prepare("UPDATE t_dosen SET idDosen = ?, namaDosen = ?, noHP = ? WHERE idDosen = ?");
+    if (!$stmt) {
+        die("Prepare failed: " . $conn->error);
     }
+
+    $stmt->bind_param("ssss", $idDosen, $namaDosen, $noHP, $id_lama);
+
+    if (!$stmt->execute()) {
+        die("Execute failed: " . $stmt->error);
+    }
+
+    $stmt->close();
 }
 
-// Redirect
-header("location:viewdosen.php");
-exit;
+header("Location: viewdosen.php");
+exit();
 ?>

@@ -1,25 +1,21 @@
 <?php
-// memanggil file koneksi.php untuk melakukan koneksi database
 include 'koneksi.php';
 
-// mengecek apakah tombol input dari form telah diklik
 if (isset($_POST['input'])) {
-
-    // membuat variabel untuk menampung data dari form
+    $idDosen = $_POST['idDosen'];
     $namaDosen = $_POST['namaDosen'];
     $noHP = $_POST['noHP'];
 
-    // jalankan query INSERT untuk menambah data ke database
-    $query = "INSERT INTO t_dosen VALUES (NULL, '$namaDosen', '$noHP')";
-    $result = mysqli_query($link, $query);
+    // Query insert dengan 3 kolom
+    $query = "INSERT INTO t_dosen (idDosen, namaDosen, noHP) VALUES (?, ?, ?)";
+    $stmt = mysqli_prepare($link, $query);
+    mysqli_stmt_bind_param($stmt, "sss", $idDosen, $namaDosen, $noHP);
 
-    // periksa query apakah ada error
-    if(!$result){
-        die ("Query gagal dijalankan: ".mysqli_errno($link).
-             " - ".mysqli_error($link));
+    if (mysqli_stmt_execute($stmt)) {
+        header("Location: viewdosen.php");
+        exit;
+    } else {
+        echo "Gagal menyimpan data: " . mysqli_error($link);
     }
 }
-
-// melakukan redirect (mengalihkan) ke halaman viewdosen.php
-header("location:viewdosen.php");
 ?>

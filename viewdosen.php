@@ -1,106 +1,80 @@
 <?php
-include 'koneksi.php'; // koneksi ke database
+require_once 'Database.php';
+$db = new Database();
+$conn = $db->getConnection();
+
+// Proses pencarian
+$search = isset($_GET['search']) ? trim($_GET['search']) : "";
+
+if ($search !== "") {
+    $stmt = $conn->prepare("SELECT * FROM t_dosen WHERE namaDosen LIKE ?");
+    $like = "%$search%";
+    $stmt->bind_param("s", $like);
+} else {
+    $stmt = $conn->prepare("SELECT * FROM t_dosen");
+}
+
+$stmt->execute();
+$result = $stmt->get_result();
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
+    <meta charset="UTF-8">
     <title>Data Dosen</title>
-    <link rel="stylesheet" type="text/css" href="viewdosen.css">
+    <link rel="stylesheet" href="viewdosen.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        h1 {
-            text-align: center;
-        }
-        table {
-            width: 840px;
-            margin: auto;
-            border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid black;
-        }
-        th, td {
-            padding: 8px 12px;
-            text-align: center;
-        }
-        form {
-            text-align: center;
-            margin: 20px;
-        }
-        input[type="text"] {
-            width: 300px;
-            padding: 6px;
-        }
-        input[type="submit"] {
-            padding: 6px 10px;
-        }
-        a {
-            margin: 0 5px;
-            text-decoration: none;
-        }
+        table { width: 80%; margin: 20px auto; border-collapse: collapse; }
+        th, td { border: 1px solid #333; padding: 8px; text-align: center; }
+        .btn { padding: 5px 10px; text-decoration: none; border-radius: 3px; }
+        .btn-edit { background-color: #4CAF50; color: white; }
+        .btn-delete { background-color: #f44336; color: white; }
+        .center { text-align: center; margin: 20px; }
     </style>
 </head>
 <body>
 
-    <h1>Tabel Dosen</h1>
-    <center class="center"><a href="input.php">Input Data</a></center>
+    <h1 style="text-align:center;">Data Dosen</h1>
 
-    <!-- Form Search -->
-    <form method="GET" action="viewdosen.php">
-        <input type="text" name="keyword" placeholder="Cari nama dosen..." value="<?php if (isset($_GET['keyword'])) echo htmlspecialchars($_GET['keyword']); ?>">
+    <div class="center">
+        <a href="input.php">+ Tambah Data</a>
+    </div>
+
+    <form action="viewdosen.php" method="get" style="text-align:center; margin-bottom: 20px;">
+        <input type="text" name="search" placeholder="Cari nama dosen..." value="<?php echo htmlspecialchars($search); ?>">
         <input type="submit" value="Cari">
     </form>
 
     <table>
         <tr>
-            <th>ID</th>
+            <th>No</th>
+            <th>ID Dosen</th>
             <th>Nama Dosen</th>
             <th>No HP</th>
-            <th>Pilihan</th>
+            <th>Aksi</th>
         </tr>
-
-<?php
-// Ambil keyword pencarian
-$keyword = '';
-if (isset($_GET['keyword'])) {
-    $keyword = mysqli_real_escape_string($link, $_GET['keyword']);
-}
-
-// Query pencarian
-$query = "SELECT * FROM t_dosen";
-if (!empty($keyword)) {
-    $query .= " WHERE namaDosen LIKE '%$keyword%'";
-}
-$query .= " ORDER BY IdDosen ASC";
-
-$result = mysqli_query($link, $query);
-
-// Cek hasil query
-if (!$result) {
-    die("Query Error: " . mysqli_errno($link) . " - " . mysqli_error($link));
-}
-
-// Tampilkan data
-if (mysqli_num_rows($result) > 0) {
-    while ($data = mysqli_fetch_assoc($result)) {
-        echo "<tr>";
-        echo "<td>{$data['idDosen']}</td>";
-        echo "<td>{$data['namaDosen']}</td>";
-        echo "<td>{$data['noHP']}</td>";
-        echo "<td>
-    <a href='editdosen.php?idDosen={$data['idDosen']}' class='btn btn-edit'>Edit</a>
-    <a href='hapusdosen.php?idDosen={$data['idDosen']}' class='btn btn-delete' onclick=\"return confirm('Yakin ingin hapus?')\">Hapus</a>
-</td>";
- 
-    }
-} else {
-    echo "<tr><td colspan='4'>Data tidak ditemukan.</td></tr>";
-}
-?>
-
+        <?php
+        $no = 1;
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                echo "<tr>
+                        <td>{$no}</td>
+                        <td>" . htmlspecialchars($row['idDosen']) . "</td>
+                        <td>" . htmlspecialchars($row['namaDosen']) . "</td>
+                        <td>" . htmlspecialchars($row['noHP']) . "</td>
+                        <td>
+                            <a class='btn btn-edit' href='editdosen.php?idDosen=" . urlencode($row['idDosen']) . "'>Edit</a>
+                            <a class='btn btn-delete' href='hapusdosen.php?id=" . urlencode($row['idDosen']) . "' onclick='return confirm(\"Yakin ingin menghapus?\")'>Hapus</a>
+                        </td>
+                    </tr>";
+                $no++;
+            }
+        } else {
+            echo "<tr><td colspan='5'>Data tidak ditemukan.</td></tr>";
+        }
+        $stmt->close();
+        ?>
     </table>
 
 </body>

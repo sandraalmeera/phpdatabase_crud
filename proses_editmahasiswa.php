@@ -1,40 +1,28 @@
 <?php
-include 'koneksi.php';
+require_once 'Database.php';
+$db = new Database();
+$conn = $db->getConnection();
 
-if (isset($_POST['edit'])) {
-    $npm_lama = $_POST['npm_lama'];
+if (isset($_POST['update'])) {
+    // Ambil data dari form
+    $npm_lama = $_POST['npm_lama']; // NPM sebelum diubah
     $npm_baru = $_POST['npm_baru'];
     $namaMhs = $_POST['namaMhs'];
     $prodi = $_POST['prodi'];
     $alamat = $_POST['alamat'];
     $noHP = $_POST['noHP'];
 
-    // Cek apakah NPM baru sudah digunakan oleh mahasiswa lain
-    if ($npm_lama !== $npm_baru) {
-        $cek_query = "SELECT * FROM t_mahasiswa WHERE npm = '$npm_baru'";
-        $cek_result = mysqli_query($link, $cek_query);
-        if (mysqli_num_rows($cek_result) > 0) {
-            die("NPM baru sudah digunakan. Silakan gunakan NPM lain.");
-        }
-    }
+    // Update query (jika npm bisa berubah)
+    $stmt = $conn->prepare("UPDATE t_mahasiswa SET npm=?, namaMhs=?, prodi=?, alamat=?, noHP=? WHERE npm=?");
+    $stmt->bind_param("ssssss", $npm_baru, $namaMhs, $prodi, $alamat, $noHP, $npm_lama);
+    $stmt->execute();
+    $stmt->close();
 
-    // Lakukan update data
-    $query = "UPDATE t_mahasiswa SET 
-                npm = '$npm_baru',
-                namaMhs = '$namaMhs', 
-                prodi = '$prodi', 
-                alamat = '$alamat', 
-                noHP = '$noHP' 
-              WHERE npm = '$npm_lama'";
-
-    $result = mysqli_query($link, $query);
-
-    if ($result) {
-        header("Location: viewmahasiswa.php");
-    } else {
-        die("Query gagal dijalankan: " . mysqli_errno($link) . " - " . mysqli_error($link));
-    }
-} else {
     header("Location: viewmahasiswa.php");
+    exit();
+} else {
+    // Jika akses langsung tanpa POST update, redirect ke halaman view
+    header("Location: viewmahasiswa.php");
+    exit();
 }
 ?>

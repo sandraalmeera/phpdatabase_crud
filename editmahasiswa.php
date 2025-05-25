@@ -1,14 +1,14 @@
 <?php
-// memanggil file koneksi.php untuk membuat koneksi
 include 'koneksi.php';
 
-// mengecek apakah url ada nilai GET npm
 if (isset($_GET['npm'])) {
     $npm = $_GET['npm'];
 
-    // ambil data dari database
-    $query = "SELECT * FROM t_mahasiswa WHERE npm='$npm'";
-    $result = mysqli_query($link, $query);
+    $query = "SELECT * FROM t_mahasiswa WHERE npm = ?";
+    $stmt = mysqli_prepare($link, $query);
+    mysqli_stmt_bind_param($stmt, "s", $npm);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
 
     if (!$result) {
         die("Query Error: " . mysqli_errno($link) . " - " . mysqli_error($link));
@@ -21,6 +21,7 @@ if (isset($_GET['npm'])) {
     $noHP = $data["noHP"];
 } else {
     header("location:viewmahasiswa.php");
+    exit;
 }
 ?>
 
@@ -29,13 +30,8 @@ if (isset($_GET['npm'])) {
 <head>
     <link rel="stylesheet" href="editmahasiswa.css" />
     <style>
-        h1 {
-            text-align: center;
-        }
-        .container {
-            width: 400px;
-            margin: auto;
-        }
+        h1 { text-align: center; }
+        .container { width: 400px; margin: auto; }
     </style>
 </head>
 <body>
@@ -46,9 +42,7 @@ if (isset($_GET['npm'])) {
                 <legend>Edit Data Mahasiswa</legend>
                 <p>
                     <label for="npm">NPM:</label>
-                    <!-- Simpan NPM lama -->
                     <input type="hidden" name="npm_lama" value="<?php echo $npm; ?>">
-                    <!-- Field untuk mengedit NPM -->
                     <input type="text" name="npm_baru" id="npm" value="<?php echo $npm; ?>" required>
                 </p>
                 <p>
@@ -69,7 +63,7 @@ if (isset($_GET['npm'])) {
                 </p>
             </fieldset>
             <p>
-                <input type="submit" name="edit" value="Update Data">
+                <input type="submit" name="update" value="Update Data">
             </p>
         </form>
     </div>

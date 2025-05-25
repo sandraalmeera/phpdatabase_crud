@@ -19,12 +19,16 @@
             <fieldset>
                 <legend>Input Data Dosen</legend>
                 <p>
-                    <label for="nama">Nama Dosen :</label>
-                    <input type="text" name="namaDosen" id="namaDosen">
+                    <label for="idDosen">ID Dosen :</label>
+                    <input type="text" name="idDosen" id="idDosen" placeholder="Misal: D001" required>
                 </p>
                 <p>
-                    <label for="ipk">No HP :</label>
-                    <input type="text" name="noHP" id="noHP" placeholder="Contoh: 081222333444">
+                    <label for="namaDosen">Nama Dosen :</label>
+                    <input type="text" name="namaDosen" id="namaDosen" required>
+                </p>
+                <p>
+                    <label for="noHP">No HP :</label>
+                    <input type="text" name="noHP" id="noHP" placeholder="Contoh: 081222333444" required>
                 </p>
             </fieldset>
             <p>

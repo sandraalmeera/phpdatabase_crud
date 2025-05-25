@@ -1,78 +1,73 @@
 <?php
-// memanggil file koneksi.php
-include("koneksi.php");
+require_once 'Database.php';
+$db = new Database();
+$conn = $db->getConnection();
 
-// cek apakah ada keyword pencarian
-$keyword = isset($_GET['keyword']) ? $_GET['keyword'] : "";
+// Ambil keyword pencarian jika ada
+$keyword = isset($_GET['keyword']) ? trim($_GET['keyword']) : '';
 
-// query dengan filter jika ada keyword
-if (!empty($keyword)) {
-    $query = "SELECT * FROM t_matakuliah WHERE namaMK LIKE '%$keyword%'";
+// Query dengan kondisi search
+if ($keyword != '') {
+    $stmt = $conn->prepare("SELECT * FROM t_matakuliah WHERE namaMK LIKE ?");
+    $searchTerm = "%$keyword%";
+    $stmt->bind_param("s", $searchTerm);
 } else {
-    $query = "SELECT * FROM t_matakuliah";
+    $stmt = $conn->prepare("SELECT * FROM t_matakuliah");
 }
 
-$result = mysqli_query($link, $query);
-
-// cek jika query gagal
-if (!$result) {
-    die("Query Error: " . mysqli_errno($link) . " - " . mysqli_error($link));
-}
+$stmt->execute();
+$result = $stmt->get_result();
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
     <title>Data Mata Kuliah</title>
-    <link rel="stylesheet" href="viewmatakuliah.css">
+    <link rel="stylesheet" type="text/css" href="viewmatakuliah.css">
 </head>
 <body>
+    <h2>Data Mata Kuliah</h2>
 
-<h1>Daftar Mata Kuliah</h1>
+    <div class="center">
+        <a href="input_matakuliah.php" class="btn-add">+ Tambah Data</a>
+    </div>
 
-<!-- Form Pencarian -->
-<form action="viewmatakuliah.php" method="get">
-    <input type="text" name="keyword" placeholder="Cari berdasarkan Nama Mata Kuliah" value="<?php echo htmlspecialchars($keyword); ?>">
-    <input type="submit" value="Cari">
-</form>
+    <form method="get" action="viewmatakuliah.php" class="search-form">
+        <input type="text" name="keyword" placeholder="Cari Nama Mata Kuliah..." value="<?php echo htmlspecialchars($keyword); ?>" />
+        <input type="submit" value="Cari" />
+    </form>
 
-<!-- Tombol Tambah -->
-<div class="center">
-    <a href="input_matakuliah.php">+ Tambah Mata Kuliah</a>
-</div>
-
-<!-- Tabel Mata Kuliah -->
-<table>
-    <thead>
+    <table>
         <tr>
+            <th>No</th>
             <th>Kode MK</th>
-            <th>Nama Mata Kuliah</th>
+            <th>Nama MK</th>
             <th>SKS</th>
             <th>Jam</th>
             <th>Aksi</th>
         </tr>
-    </thead>
-    <tbody>
-        <?php if (mysqli_num_rows($result) > 0): ?>
-            <?php while($row = mysqli_fetch_assoc($result)): ?>
-            <tr>
-                <td><?php echo $row['kodeMK']; ?></td>
-                <td><?php echo $row['namaMK']; ?></td>
-                <td><?php echo $row['sks']; ?></td>
-                <td><?php echo $row['jam']; ?></td>
-                <td>
-                    <a href="editmatakuliah.php?kodeMK=<?php echo $row['kodeMK']; ?>" class="btn btn-edit">Edit</a>
-                    <a href="hapusmatakuliah.php?kodeMK=<?php echo $row['kodeMK']; ?>" class="btn btn-delete" onclick="return confirm('Yakin ingin menghapus?')">Hapus</a>
-                </td>
-            </tr>
-            <?php endwhile; ?>
-        <?php else: ?>
-            <tr>
-                <td colspan="5">Data tidak ditemukan.</td>
-            </tr>
-        <?php endif; ?>
-    </tbody>
-</table>
-
+        <?php
+        $no = 1;
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                echo "<tr>
+                        <td>{$no}</td>
+                        <td>{$row['kodeMK']}</td>
+                        <td>{$row['namaMK']}</td>
+                        <td>{$row['sks']}</td>
+                        <td>{$row['jam']}</td>
+                        <td>
+                            <a href='editmatakuliah.php?kodeMK={$row['kodeMK']}' class='btn btn-edit'>Edit</a>
+                            <a href='hapusmatakuliah.php?id={$row['kodeMK']}' class='btn btn-delete' onclick='return confirm(\"Yakin ingin menghapus?\")'>Hapus</a>
+                        </td>
+                    </tr>";
+                $no++;
+            }
+        } else {
+            echo "<tr><td colspan='6' style='text-align:center;'>Data tidak ditemukan</td></tr>";
+        }
+        $stmt->close();
+        ?>
+    </table>
 </body>
 </html>

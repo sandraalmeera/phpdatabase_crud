@@ -1,82 +1,76 @@
 <?php
-include 'koneksi.php';  // koneksi database
+require_once 'Database.php';
+$db = new Database();
+$conn = $db->getConnection();
+
+// Proses pencarian
+$search = isset($_GET['search']) ? $_GET['search'] : '';
+$query = "SELECT * FROM t_mahasiswa";
+if (!empty($search)) {
+    $query .= " WHERE namaMhs LIKE ?";
+    $stmt = $conn->prepare($query);
+    $like = "%$search%";
+    $stmt->bind_param("s", $like);
+} else {
+    $stmt = $conn->prepare($query);
+}
+$stmt->execute();
+$result = $stmt->get_result();
 ?>
 
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-    <meta charset="UTF-8" />
     <title>Data Mahasiswa</title>
-    <link rel="stylesheet" href="viewmahasiswa.css" />
+    <link rel="stylesheet" type="text/css" href="viewmahasiswa.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <h1>Tabel Mahasiswa</h1>
-
-    <div class="center">
-        <a href="input_mahasiswa.php">Input Data Mahasiswa</a>
-    </div>
+    <h1>Data Mahasiswa</h1>
 
     <!-- Form Search -->
-    <form method="GET" action="">
-        <input type="text" name="keyword" placeholder="Cari nama mahasiswa..." 
-            value="<?php if (isset($_GET['keyword'])) echo htmlspecialchars($_GET['keyword']); ?>">
+    <form action="" method="GET">
+        <input type="text" name="search" placeholder="Cari berdasarkan nama..." value="<?php echo htmlspecialchars($search); ?>">
         <input type="submit" value="Cari">
     </form>
 
+    <!-- Tombol Tambah Data -->
+    <div class="center">
+        <a class="tambah-btn" href="input_mahasiswa.php">+ Tambah Data</a>
+    </div>
+
+    <!-- Tabel Mahasiswa -->
     <table>
-        <thead>
-            <tr>
-                <th>NPM</th>
-                <th>Nama Mahasiswa</th>
-                <th>Program Studi</th>
-                <th>Alamat</th>
-                <th>No HP</th>
-                <th>Pilihan</th>
-            </tr>
-        </thead>
-        <tbody>
-<?php
-// Ambil keyword pencarian
-$keyword = '';
-if (isset($_GET['keyword'])) {
-    $keyword = mysqli_real_escape_string($link, $_GET['keyword']);
-}
-
-// Query dengan filter jika keyword ada
-$query = "SELECT * FROM t_mahasiswa";
-if (!empty($keyword)) {
-    $query .= " WHERE namaMhs LIKE '%$keyword%'";
-}
-$query .= " ORDER BY npm ASC";
-
-$result = mysqli_query($link, $query);
-
-// Cek query
-if (!$result) {
-    die ("Query Error: " . mysqli_errno($link) . " - " . mysqli_error($link));
-}
-
-// Tampilkan data
-if (mysqli_num_rows($result) > 0) {
-    while ($data = mysqli_fetch_assoc($result)) {
-        echo "<tr>";
-        echo "<td>{$data['npm']}</td>";
-        echo "<td>{$data['namaMhs']}</td>";
-        echo "<td>{$data['prodi']}</td>";
-        echo "<td>{$data['alamat']}</td>";
-        echo "<td>{$data['noHP']}</td>";
-        echo "<td>
-                <a href='editmahasiswa.php?npm={$data['npm']}' class='btn btn-edit'>Edit</a>
-                <a href='hapusmahasiswa.php?npm={$data['npm']}' class='btn btn-delete' onclick=\"return confirm('Anda yakin akan menghapus data?')\">Hapus</a>
-              </td>";
-        echo "</tr>";
-    }
-} else {
-    echo "<tr><td colspan='6'>Data tidak ditemukan.</td></tr>";
-}
-?>
-        </tbody>
+        <tr>
+            <th>No</th>
+            <th>NPM</th>
+            <th>Nama</th>
+            <th>Prodi</th>
+            <th>Alamat</th>
+            <th>No HP</th>
+            <th>Aksi</th>
+        </tr>
+        <?php
+        $no = 1;
+        while ($row = $result->fetch_assoc()) {
+            echo "<tr>
+                    <td>{$no}</td>
+                    <td>{$row['npm']}</td>
+                    <td>{$row['namaMhs']}</td>
+                    <td>{$row['prodi']}</td>
+                    <td>{$row['alamat']}</td>
+                    <td>{$row['noHP']}</td>
+                    <td>
+                        <a class='btn btn-edit' href='editmahasiswa.php?npm={$row['npm']}'>Edit</a>
+                        <a class='btn btn-delete' href='hapusmahasiswa.php?id={$row['npm']}' onclick='return confirm(\"Yakin ingin menghapus?\")'>Hapus</a>
+                    </td>
+                </tr>";
+            $no++;
+        }
+        $stmt->close();
+        ?>
     </table>
+
 </body>
 </html>

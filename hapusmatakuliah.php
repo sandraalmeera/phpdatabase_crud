@@ -1,24 +1,21 @@
 <?php
-// buka koneksi dengan MySQL
-include("koneksi.php");
+require_once 'Database.php';
+$db = new Database();
+$conn = $db->getConnection();
 
-// mengecek apakah di url ada GET kodeMK
-if (isset($_GET["kodeMK"])) {
+if (isset($_GET['id'])) {
+    $kodeMK = $_GET['id'];
 
-    // menyimpan variabel kode dari url ke dalam variabel $kodeMK
-    $kode = $_GET["kodeMK"];
-
-    // jalankan query DELETE untuk menghapus data
-    $query = "DELETE FROM t_matakuliah WHERE kodeMK='$kode'";
-    $hasil_query = mysqli_query($link, $query);
-
-    // periksa query, apakah ada kesalahan
-    if (!$hasil_query) {
-        die("Gagal menghapus data: " . mysqli_errno($link) .
-            " - " . mysqli_error($link));
+    $stmt = $conn->prepare("DELETE FROM t_matakuliah WHERE kodeMK = ?");
+    if ($stmt) {
+        $stmt->bind_param("i", $kodeMK);
+        $stmt->execute();
+        $stmt->close();
+    } else {
+        die("Gagal menyiapkan statement: " . $conn->error);
     }
 }
 
-// melakukan redirect ke halaman viewmatakuliah.php
-header("location:viewmatakuliah.php");
+header("Location: viewmatakuliah.php");
+exit();
 ?>

@@ -1,30 +1,29 @@
 <?php
-include("koneksi.php");
+include 'koneksi.php';
 
-if (isset($_POST["edit"])) {
-    // Data baru dari form
-    $kodeMK_baru = $_POST["kodeMK"];
-    $namaMK = $_POST["namaMK"];
-    $sks = $_POST["sks"];
-    $jam = $_POST["jam"];
-    // Data kode lama sebagai acuan WHERE
-    $kodeMK_lama = $_POST["kodeMK_lama"];
+if (isset($_POST['edit'])) {
+    $kodeMK_lama = $_POST['kodeMK_lama'];
+    $kodeMK_baru = $_POST['kodeMK_baru'];
+    $namaMK = $_POST['namaMK'];
+    $sks = $_POST['sks'];
+    $jam = $_POST['jam'];
 
     // Query update
-    $query = "UPDATE t_matakuliah SET 
-                kodeMK = '$kodeMK_baru',
-                namaMK = '$namaMK',
-                sks = '$sks',
-                jam = '$jam'
-              WHERE kodeMK = '$kodeMK_lama'";
-
-    $result = mysqli_query($link, $query);
-
-    if (!$result) {
-        die("Gagal mengedit data: " . mysqli_errno($link) . " - " . mysqli_error($link));
+    $query = "UPDATE t_matakuliah SET kodeMK = ?, namaMK = ?, sks = ?, jam = ? WHERE kodeMK = ?";
+    $stmt = mysqli_prepare($link, $query);
+    mysqli_stmt_bind_param($stmt, "ssiii", $kodeMK_baru, $namaMK, $sks, $jam, $kodeMK_lama);
+    
+    if (mysqli_stmt_execute($stmt)) {
+        // Jika update berhasil, redirect ke halaman view dengan pesan sukses (opsional)
+        header("Location: viewmatakuliah.php?update=success");
+        exit;
+    } else {
+        // Jika gagal update
+        echo "Error: " . mysqli_error($link);
     }
-
-    // Redirect ke halaman tampilan
-    header("location:viewmatakuliah.php");
+} else {
+    // Jika akses langsung ke file ini tanpa submit form
+    header("Location: viewmatakuliah.php");
+    exit;
 }
 ?>

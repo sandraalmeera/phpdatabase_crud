@@ -1,28 +1,21 @@
 <?php
-// memanggil file koneksi.php untuk membuat koneksi ke database
-include("koneksi.php");
+include 'koneksi.php';
 
-// mengecek apakah tombol input telah diklik
 if (isset($_POST['input'])) {
-    // membuat variabel untuk menampung data dari form
     $kodeMK = $_POST['kodeMK'];
     $namaMK = $_POST['namaMK'];
     $sks = $_POST['sks'];
     $jam = $_POST['jam'];
 
-    // membuat dan menjalankan query INSERT
-    $query = "INSERT INTO t_matakuliah (kodeMK, namaMK, sks, jam)
-              VALUES ('$kodeMK', '$namaMK', '$sks', '$jam')";
+    $query = "INSERT INTO t_matakuliah (kodeMK, namaMK, sks, jam) VALUES (?, ?, ?, ?)";
+    $stmt = mysqli_prepare($link, $query);
+    mysqli_stmt_bind_param($stmt, "ssii", $kodeMK, $namaMK, $sks, $jam);
 
-    $result = mysqli_query($link, $query);
-
-    // periksa hasil query, apakah ada error
-    if (!$result) {
-        die("Query gagal dijalankan: " . mysqli_errno($link) .
-            " - " . mysqli_error($link));
+    if (mysqli_stmt_execute($stmt)) {
+        header("Location: viewmatakuliah.php");
+        exit;
+    } else {
+        echo "Gagal menyimpan data: " . mysqli_error($link);
     }
 }
-
-// redirect ke halaman viewmatakuliah.php
-header("location:viewmatakuliah.php");
 ?>

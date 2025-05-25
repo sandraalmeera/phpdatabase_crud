@@ -23,12 +23,16 @@ h1 {
 }
 
 /* -- Tombol Input Data -- */
+.center {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
 .center a {
     display: inline-block;
     background-color: #4a4e69;
     color: #fff;
     padding: 12px 24px;
-    margin-bottom: 30px;
     text-decoration: none;
     border-radius: 10px;
     font-weight: 600;
@@ -45,6 +49,7 @@ h1 {
 form {
     text-align: center;
     margin-bottom: 30px;
+    margin-top: 20px;
 }
 
 input[type="text"] {
@@ -90,7 +95,7 @@ table {
     margin: auto;
     border-collapse: collapse;
     background-color: #fff;
-    border-radius: 0; /* Sudut tabel tidak melengkung */
+    border-radius: 0;
     overflow: hidden;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
